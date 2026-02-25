@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovelGen AI | Maikel Edition</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>NovelGen <span>AI</span></h1>
+        <div id="auth-section">
+            <input type="email" id="user-email" placeholder="Correo">
+            <button onclick="sendCode()">Enviar Código</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <section id="step-1">
+            <h2>1. Tu Idea Maestra</h2>
+            <textarea id="idea-input" placeholder="Escribe de qué trata tu historia..."></textarea>
+            <button onclick="startStructure()" class="btn-main">Generar Capítulos</button>
+        </section>
+
+        <section id="step-2" class="hidden">
+            <h2>2. Organiza tus Capítulos</h2>
+            <div id="chapters-container"></div>
+            <button onclick="addManualChapter()">+ Añadir Manual</button>
+            <button onclick="showStep(3)" class="btn-main">Siguiente</button>
+        </section>
+
+        <section id="step-3" class="hidden">
+            <h2>3. Personaliza el Estilo</h2>
+            <div class="grid-config">
+                <label>Longitud: 
+                    <select id="config-length">
+                        <option value="corto">Corto</option>
+                        <option value="normal">Normal</option>
+                        <option value="epico">Épicamente Largo (PRO)</option>
+                    </select>
+                </label>
+                <label>Narrador: 
+                    <select id="config-narrator">
+                        <option value="1ra">1ra Persona</option>
+                        <option value="3ra">3ra Persona</option>
+                        <option value="omnisciente">Omnisciente</option>
+                    </select>
+                </label>
+                <label>Público: 
+                    <select id="config-target">
+                        <option value="general">General / Neutro</option>
+                        <option value="adulto">Adulto (+18)</option>
+                        <option value="infantil">Infantil</option>
+                    </select>
+                </label>
+            </div>
+            <button onclick="generateFinalBook()" class="btn-main">Generar Libro Completo</button>
+        </section>
+
+        <section id="step-4" class="hidden">
+            <h2>4. Tu Libro está listo</h2>
+            <div id="book-result" contenteditable="true"></div>
+            <div class="export-options">
+                <button onclick="pay('PDF')">Exportar PDF ($5)</button>
+                <button onclick="pay('Word')">Exportar Word ($5)</button>
+                <button onclick="pay('CBR')">Exportar CBR (PRO)</button>
+            </div>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+  </html>
+  
