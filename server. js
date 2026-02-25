@@ -1,0 +1,47 @@
+const express = require('express');
+const axios = require('axios');
+const path = require('path');
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.use(express.json());
+app.use(express.static('public'));
+
+// CONFIGURACIÓN DE GÉMINI (Tu Key proporcionada)
+const GEMINI_KEY = "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";
+
+// RUTA PARA GENERAR CAPÍTULOS INICIALES
+app.post('/api/generate-structure', async (req, res) => {
+    const { idea } = req.body;
+    const prompt = `Actúa como un editor literario. Basado en la idea: "${idea}", genera una lista de 5 a 10 capítulos con un título y una descripción breve de una frase para cada uno. Formato: JSON array de objetos {title, description}.`;
+
+    try {
+        const response = await axios.post(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_KEY}`, {
+            contents: [{ parts: [{ text: prompt }] }]
+        });
+        // Limpiamos la respuesta para obtener solo el JSON
+        const rawText = response.data.candidates[0].content.parts[0].text;
+        res.json(JSON.parse(rawText.substring(rawText.indexOf('['), rawText.lastIndexOf(']') + 1)));
+    } catch (error) {
+        res.status(500).json({ error: "Error conectando con la IA" });
+    }
+});
+
+// RUTA PARA GENERAR EL CONTENIDO FINAL DEL LIBRO
+app.post('/api/write-book', async (req, res) => {
+    const { chapters, config } = req.body;
+    const prompt = `Escribe un libro completo basado en estos capítulos: ${JSON.stringify(chapters)}. 
+                    Longitud: ${config.length}, Narrador: ${config.narrator}, Estilo: ${config.style}, Público: ${config.target}. 
+                    Enfócate en: ${config.focus}. Devuelve el texto narrativo completo.`;
+
+    try {
+        const response = await axios.post(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_KEY}`, {
+            contents: [{ parts: [{ text: prompt }] }]
+        });
+        res.json({ text: response.data.candidates[0].content.parts[0].text });
+    } catch (error) {
+        res.status(500).json({ error: "Error en la escritura" });
+    }
+});
+
+app.listen(port, () => console.log(`Servidor activo en puerto ${port}`));
